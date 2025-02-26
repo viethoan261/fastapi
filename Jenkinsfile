@@ -31,6 +31,15 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
+                    // Kiểm tra credentials
+                    def credentials = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
+                        com.cloudbees.plugins.credentials.common.StandardUsernameCredentials.class,
+                        Jenkins.instance,
+                        null,
+                        null
+                    )
+                    echo "Available credentials: ${credentials}"
+                    
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
                         sh "docker push ${DOCKER_IMAGE}:${BUILD_ID}"
