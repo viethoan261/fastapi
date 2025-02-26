@@ -22,7 +22,9 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'python -m pytest'
+                script {
+                    sh "docker run --rm ${DOCKER_IMAGE}:${BUILD_ID} python -m pytest"
+                }
             }
         }
 
