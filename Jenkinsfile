@@ -16,10 +16,10 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker rmi ${DOCKER_IMAGE}:${BUILD_ID} || true"
-                    sh "docker build --no-cache -t ${DOCKER_IMAGE}:${BUILD_ID} ."
-                    sh "docker images ${DOCKER_IMAGE}:${BUILD_ID}"
-                    sh "docker save ${DOCKER_IMAGE}:${BUILD_ID} > image.tar"
+                    sh "docker rmi ${DOCKER_IMAGE} || true"
+                    sh "docker build --no-cache -t ${DOCKER_IMAGE} ."
+                    sh "docker images ${DOCKER_IMAGE}"
+                    sh "docker save ${DOCKER_IMAGE} > image.tar"
                     sh "docker load < image.tar"
                     sh "rm image.tar"
                 }
@@ -29,7 +29,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    sh "docker run --rm ${DOCKER_IMAGE}:${BUILD_ID} python -m pytest"
+                    sh "docker run --rm ${DOCKER_IMAGE} python -m pytest"
                 }
             }
         }
@@ -38,7 +38,7 @@ pipeline {
             steps {
                 script {
                     sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                    sh "docker push ${DOCKER_IMAGE}:${BUILD_ID}"
+                    sh "docker push ${DOCKER_IMAGE}"
                 }
                 sh 'docker-compose down && docker-compose up -d'
             }
