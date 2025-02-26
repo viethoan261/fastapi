@@ -16,7 +16,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t ${DOCKER_IMAGE}:${BUILD_ID} ."
+                    sh "docker rmi ${DOCKER_IMAGE}:${BUILD_ID} || true"
+                    sh "docker build --no-cache -t ${DOCKER_IMAGE}:${BUILD_ID} ."
                 }
             }
         }
