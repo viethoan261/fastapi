@@ -1,14 +1,14 @@
- pipeline {
+pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "your_dockerhub_username/fastapi-app"
+        DOCKER_IMAGE = "hoannv261/fastapi-app"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/your_username/your_repo.git'
+                git branch: 'main', url: 'https://github.com/viethoan261/fastapi.git'
             }
         }
 
