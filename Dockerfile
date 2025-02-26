@@ -4,7 +4,13 @@ FROM python:3.9
 # Thiết lập thư mục làm việc
 WORKDIR /app
 
-# Copy requirements trước để tận dụng cache
+# Thêm label để track version
+ARG BUILD_DATE
+ARG VERSION
+LABEL build_date=$BUILD_DATE
+LABEL version=$VERSION
+
+# Copy requirements trước
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 

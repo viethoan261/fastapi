@@ -16,11 +16,21 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build --no-cache -t ${DOCKER_IMAGE} ."
-                    sh "docker images ${DOCKER_IMAGE}"
-                    sh "docker save ${DOCKER_IMAGE} > image.tar"
-                    sh "docker load < image.tar"
-                    sh "rm image.tar"
+                    // Xóa tất cả images cũ
+                    sh "docker images -a | grep 'hoannv261/fastapi-app' | awk '{print \$3}' | xargs -r docker rmi -f"
+                    
+                    // Build với timestamp để tránh cache
+                    def BUILD_DATE = sh(script: 'date -u +"%Y-%m-%dT%H:%M:%SZ"', returnStdout: true).trim()
+                    
+                    sh """
+                        docker build --no-cache \
+                        --build-arg BUILD_DATE=${BUILD_DATE} \
+                        --build-arg VERSION=${BUILD_ID} \
+                        -t ${DOCKER_IMAGE} .
+                    """
+                    
+                    // Kiểm tra image mới
+                    sh "docker inspect ${DOCKER_IMAGE}"
                 }
             }
         }
@@ -47,7 +57,8 @@ pipeline {
     post {
         always {
             sh 'docker logout'
-            sh "rm -f image.tar || true"
+            // Clean up old images
+            sh "docker images -a | grep 'hoannv261/fastapi-app' | awk '{print \$3}' | xargs -r docker rmi -f || true"
         }
     }
 }
