@@ -1,16 +1,14 @@
 # Sử dụng image Python chính thức
-FROM python:3.9-slim
+FROM python:3.9
 
 # Thiết lập thư mục làm việc
 WORKDIR /app
 
-# Sao chép requirements.txt vào thư mục làm việc
+# Copy requirements trước để tận dụng cache
 COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-# Cài đặt các dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Sao chép toàn bộ mã nguồn vào thư mục làm việc
+# Copy source code sau
 COPY . .
 
 # Expose cổng mà FastAPI chạy

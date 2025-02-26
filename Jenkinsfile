@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "hoannv261/fastapi-app"
+        DOCKER_IMAGE = "hoannv261/fastapi-app:latest"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
     }
 
@@ -16,7 +16,6 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker rmi ${DOCKER_IMAGE} || true"
                     sh "docker build --no-cache -t ${DOCKER_IMAGE} ."
                     sh "docker images ${DOCKER_IMAGE}"
                     sh "docker save ${DOCKER_IMAGE} > image.tar"
