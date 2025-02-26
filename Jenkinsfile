@@ -15,7 +15,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'sudo docker build -t ${DOCKER_IMAGE}:${BUILD_ID} .'
+                    sh "docker build -t ${DOCKER_IMAGE}:${BUILD_ID} ."
                 }
             }
         }
@@ -30,11 +30,11 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh 'sudo docker login -u $DOCKER_USER -p $DOCKER_PASS'
-                        sh 'sudo docker push ${DOCKER_IMAGE}:${BUILD_ID}'
+                        sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+                        sh "docker push ${DOCKER_IMAGE}:${BUILD_ID}"
                     }
                 }
-                sh 'sudo docker-compose down && sudo docker-compose up -d'
+                sh 'docker-compose down && docker-compose up -d'
             }
         }
     }
