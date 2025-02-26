@@ -18,6 +18,10 @@ pipeline {
                 script {
                     sh "docker rmi ${DOCKER_IMAGE}:${BUILD_ID} || true"
                     sh "docker build --no-cache -t ${DOCKER_IMAGE}:${BUILD_ID} ."
+                    sh "docker images ${DOCKER_IMAGE}:${BUILD_ID}"
+                    sh "docker save ${DOCKER_IMAGE}:${BUILD_ID} > image.tar"
+                    sh "docker load < image.tar"
+                    sh "rm image.tar"
                 }
             }
         }
@@ -44,6 +48,7 @@ pipeline {
     post {
         always {
             sh 'docker logout'
+            sh "rm -f image.tar || true"
         }
     }
 }
